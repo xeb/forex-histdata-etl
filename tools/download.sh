@@ -1,4 +1,7 @@
 #!/bin/bash
+# HistData.com Downloader
+# you can specify --ticker or --year to get a specific example
+
 while test $# -gt 0; do
         case "$1" in
                 -h|--help)
@@ -8,7 +11,7 @@ while test $# -gt 0; do
                         echo " "
                         echo "arguments:"
                         echo "-h, --help                show brief help (this)"
-                        echo "-t, --ticket=TICKER       specify an action to use"
+                        echo "-t, --ticker=TICKER       specify an action to use"
                         echo "-y, --year=YEAR           specify a directory to store output in"
                         exit 0
                         ;;
@@ -53,14 +56,24 @@ if [[ -z "$YEAR" ]]; then
     echo "Year not set"
     exit 2
 fi
+
 export MONTH=$YEAR
 echo "Using ticker '$TICKER' and year of '$YEAR' and month of '$MONTH'"
 
 export TK=$(curl -s http://www.histdata.com/download-free-forex-historical-data/?/ascii/1-minute-bar-quotes/${TICKER}/${YEAR} | grep "name=\"tk\"" | head -n 1 | sed -e "s/.* value=\"\(.*\)\".*/\1/")
+
+if [[ -z "$TK" ]]; then
+    echo "Could not get TK value"
+    exit 3
+fi
+
 echo "TK value is $TK"
 
-echo "Downloading..."
-curl -s 'http://www.histdata.com/get.php' \
+export FILE_PATH="output-$TICKER-$YEAR.zip"
+
+echo "Downloading $FILE_PATH..."
+
+curl 'http://www.histdata.com/get.php' \
     -H 'Cookie: __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; complianceCookie=on; gsScrollPos=' \
     -H 'Origin: http://www.histdata.com' \
     -H 'Accept-Encoding: gzip, deflate' \
@@ -75,5 +88,13 @@ Chrome/48.0.2564.97 Safari/537.36' \
     -H 'Connection: keep-alive' \
     -H 'DNT: 1' \
     --data "tk=$TK&date=$YEAR&datemonth=$MONTH&platform=ASCII&timeframe=M1&fxpair=$TICKER" \
-    --compressed > output.zip
-echo "Done!"
+    --compressed > $FILE_PATH
+if [[ -s $FILE_PATH ]]; then
+    unzip -u $FILE_PATH
+    echo "Done!"
+else
+    echo "Failed to download, check year"
+    exit 3
+fi
+rm -f $FILE_PATH
+exit 0
