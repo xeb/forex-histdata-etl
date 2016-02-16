@@ -11,47 +11,17 @@ while test $# -gt 0; do
                         echo " "
                         echo "arguments:"
                         echo "-h, --help                show brief help (this)"
-                        echo "-t, --ticker=TICKER       specify an action to use"
-                        echo "-y, --year=YEAR           the year to download"
-                        echo "-m, --month=MONTH         the month to download"
+                        echo "--ticker=TICKER       specify an action to use"
+                        echo "--year=YEAR           the year to download"
+                        echo "--month=MONTH         the month to download"
                         exit 0
-                        ;;
-                -t)
-                        shift
-                        if test $# -gt 0; then
-                                export TICKER=$1
-                        else
-                                echo "no ticker specified"
-                                exit 1
-                        fi
-                        shift
                         ;;
                 --ticker*)
                         export TICKER=`echo $1 | sed -e 's/^[^=]*=//g'`
                         shift
                         ;;
-                -y)
-                        shift
-                        if test $# -gt 0; then
-                                export YEAR=$1
-                        else
-                                echo "no year specified"
-                                exit 1
-                        fi
-                        shift
-                        ;;
                 --year*)
                         export YEAR=`echo $1 | sed -e 's/^[^=]*=//g'`
-                        shift
-                        ;;
-                -m)
-                        shift
-                        if test $# -gt 0; then
-                                export MONTH=$1
-                        else
-                                echo "no month specified"
-                                exit 1
-                        fi
                         shift
                         ;;
                 --month*)
@@ -71,33 +41,36 @@ if [[ -z "$YEAR" ]]; then
     echo "Year not set"
     exit 2
 fi
+
 # Get the special "TK" token value...
-export TK_URL="http://www.histdata.com/download-free-forex-historical-data/?/ascii/1-minute-bar-quotes/${TICKER}/${YEAR}"
+export TK_URL="http://www.histdata.com/download-free-forex-historical-data/?/metastock/1-minute-bar-quotes/${TICKER}/${YEAR}"
 
 if [[ -z "$MONTH" ]]; then
-    echo "Month not set, using year..."
-    export MONTH=$YEAR # we are assuming that with no month, we use the year-based scheme for downloading
+    # we are assuming that with no month, we use the year-based scheme for downloading
+    export MONTH=""
+    #echo "No month specified!!!"
 else
     # Month was set, so use it in the URL
     export MONTH=`printf "%02d\n" ${MONTH}`
-    echo "Month is $MONTH now; resetting TK URL"
-    export TK_URL="http://www.histdata.com/download-free-forex-historical-data/?/ascii/1-minute-bar-quotes/${TICKER}/${YEAR}/${MONTH}"
+    #echo "Month is $MONTH now; resetting TK URL"
+    export TK_URL="http://www.histdata.com/download-free-forex-historical-data/?/metastock/1-minute-bar-quotes/${TICKER}/${YEAR}/${MONTH}"
 fi
 
-echo "Using ticker '$TICKER' and year of '$YEAR' and month of '$MONTH'"
+# echo "Using ticker '$TICKER' and year of '$YEAR' and month of '$MONTH'"
 export TK=$(curl -s ${TK_URL} | grep "name=\"tk\"" | head -n 1 | sed -e "s/.* value=\"\(.*\)\".*/\1/")
 
-
 if [[ -z "$TK" ]]; then
-    echo "Could not get TK value"
+    echo "No data for $TICKER-$YEAR-$MONTH; Could not get TK value"
     exit 3
 fi
 
 # echo "TK value is $TK"
 
 export FILE_PATH="output-$TICKER-$YEAR-$MONTH.zip"
+#echo "Downloading $FILE_PATH..."
 
-echo "Downloading $FILE_PATH..."
+export PAYLOAD="tk=$TK&date=$YEAR&datemonth=$YEAR$MONTH&platform=MS&timeframe=M1&fxpair=$TICKER"
+#echo "Payload is $PAYLOAD"
 
 curl 'http://www.histdata.com/get.php' \
     -H 'Cookie: __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; complianceCookie=on; gsScrollPos=' \
@@ -110,10 +83,10 @@ Chrome/48.0.2564.97 Safari/537.36' \
     -H 'Content-Type: application/x-www-form-urlencoded' \
     -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
     -H 'Cache-Control: max-age=0' \
-    -H 'Referer: http://www.histdata.com/download-free-forex-historical-data/?/ascii/1-minute-bar-quotes/eurusd/2000' \
+    -H 'Referer: http://www.histdata.com/download-free-forex-historical-data/?/metastock/1-minute-bar-quotes/eurusd/2000' \
     -H 'Connection: keep-alive' \
     -H 'DNT: 1' \
-    --data "tk=$TK&date=$YEAR&datemonth=$YEAR$MONTH&platform=ASCII&timeframe=M1&fxpair=$TICKER" \
+    --data "$PAYLOAD" \
     --compressed > $FILE_PATH
 if [[ -s $FILE_PATH ]]; then
     echo "Done!"
