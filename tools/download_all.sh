@@ -5,7 +5,7 @@ export ALL_TICKERS=$(`pwd`/get_tickers.sh)
 
 # Ensure we have a data directory
 
-RAW_PATH="../raw"
+RAW_PATH="../data/RAW"
 mkdir -p $RAW_PATH
 
 for t in $ALL_TICKERS; do
@@ -16,6 +16,11 @@ for t in $ALL_TICKERS; do
     		for j in `seq 1 $(date +%m)`; do
     			# echo "Downloading $t for $i (month $j)..."
     			FILE="$RAW_PATH/$t$i`printf "%02d\n" ${j}`.csv"
+
+    			# if it's the current month, delete the existing raw file
+    			if [[ "$j" -eq $(date +%m | sed 's/^0*//') ]]; then
+    				rm -f $FILE
+    			fi
     			if [[ -s $FILE ]]; then
 		    		echo "File $FILE exists, skipping..."
 		    	else

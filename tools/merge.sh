@@ -4,7 +4,7 @@
 export ALL_TICKERS=$(./get_tickers.sh)
 
 RAW_PATH="../raw"
-DATA_PATH="../data"
+DATA_PATH="../1M"
 
 mkdir -p $DATA_PATH
 mkdir -p $RAW_PATH
