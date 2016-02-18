@@ -45,7 +45,7 @@ def parse_file(source, source_path, dest_path):
 
         # foreach date in the file
         dates = pd.Series(df.Date.ravel()).unique()
-        print("Iterating over %s dates", len(dates))
+        print("Iterating over %s dates" % len(dates))
 
         for date in dates:
             # get all row for this date
