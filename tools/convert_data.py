@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# Reduce Data will read all merged CSVs into a Pandas DataFrame
+# Convert Data will read all merged CSVs into a Pandas DataFrame
 # then merge each bar into new bars based on minutes (within a day)
 # default is 60 minutes
 
@@ -9,10 +9,10 @@ import numpy as np
 import errno
 import datetime
 
-verbose = True
-window_minutes = 60
+verbose = False
+window_minutes = 240
 minute_path = os.path.join(os.getcwd(), "../data/1M/")
-output_path = os.path.join(os.getcwd(), "../data/60M/")
+output_path = os.path.join(os.getcwd(), "../data/240M/")
 files = os.listdir(minute_path)
 epoch = datetime.datetime(1900, 1, 1, 0, 0)
 
@@ -31,14 +31,12 @@ def srange(start, stop, step):
             yield start + i*step
 
 def parse_file(source, source_path, dest_path):
-    if verbose:
-        print("Reading %s" % source)
+    print("Reading %s" % source)
     
     df = pd.read_csv(os.path.join(source_path, source), sep=',')
     
     # Convert times into minute-based indexes (0 -> 1440)
-    if verbose:
-        print("Converting times %s" % source)
+    print("Converting times %s" % source)
     
     df.Time = df.Time.apply(lambda x: (datetime.datetime.strptime(str("%04d" % x), '%H%M') - epoch).seconds / 60)
 
@@ -47,8 +45,7 @@ def parse_file(source, source_path, dest_path):
 
         # foreach date in the file
         dates = pd.Series(df.Date.ravel()).unique()
-        if verbose:
-            print("Iterating over %s dates", len(dates))
+        print("Iterating over %s dates", len(dates))
 
         for date in dates:
             # get all row for this date
@@ -76,6 +73,8 @@ def parse_file(source, source_path, dest_path):
                 if verbose and date % 5 == 0 and endT >= 1430:
                     print("For Date %s, Time %s; Parsed %s rows.\nOpen=%s,High=%s,Low=%s,Close=%s,Volume=%s" % (date, t, len(rowsT), Open, High, Low, Close, Volume))
 
+    print("\033[94mDone.\033[0m Converted %s" % source)    
+
 if __name__ == "__main__":
     mkdir_p(minute_path)
     mkdir_p(output_path)
@@ -83,3 +82,4 @@ if __name__ == "__main__":
         if file.endswith(".csv") == False:
             continue
         parse_file(file, source_path=minute_path, dest_path=output_path)
+    print("Finished processing %s files\n\033[92mCOMPLETE\033[0m")

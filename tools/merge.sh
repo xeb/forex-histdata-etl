@@ -3,8 +3,8 @@
 
 export ALL_TICKERS=$(./get_tickers.sh)
 
-RAW_PATH="../raw"
-DATA_PATH="../1M"
+RAW_PATH="../data/RAW"
+DATA_PATH="../data/1M"
 
 mkdir -p $DATA_PATH
 mkdir -p $RAW_PATH
