@@ -45,7 +45,6 @@ import pandas as pd
 source_path="./data/60M/" 
 source="EURUSD.csv" 
 df = pd.read_csv(os.path.join(source_path, source), sep=',')
-'
 ```
 
 ## Why do this?
