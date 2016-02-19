@@ -1,21 +1,24 @@
 # FOREX HistData.com ETL Tools
 
 ## Quick Note
-The good people at HistData.com have setup the infrastructure necessary to provide FOREX data for free.  This is awesome & if possible, you should donate or purchase some of their services if you are going to use the data.  The tools contained herein will download, merge and convert the datasets so they are usable, but not (yet) easily updateable.  The entire sets have to be rebuilt when updates occur (but not downloaded in their entirety).
+The good people at [HistData.com](http://www.histdata.com) have setup the infrastructure necessary to provide FOREX data for free.  This is awesome & if possible, you should donate or purchase some of their services if you are going to use the data.  The tools contained herein will download, merge and convert the datasets so they are usable, but not (yet) easily updateable.  The entire sets have to be rebuilt when updates occur (but not downloaded in their entirety).
 
 ## Quick Start
 A Makefile is included for some common operations.  They are documented below.
 
 ### make download
 ```make download```
+
 This will get all files from HistData.com as MetaTrader CSVs and put the contents in ```../data/RAW```.
 
 ### make merge
 ```make merge```
+
 This will combine all the yearly & monthly files into a single CSV per instrument (e.g. *AUDUSD.csv*).  Since the data from HistData.com have provided 1 minute data, the contents of merged data is in ```../data/1M```.
 
 ### make convert
 ```make convert```
+
 Using [Pandas](http://pandas.pydata.org/), this will invoke the *convert_data.py* script and by default create 60 minute data sets.  The end result will be stored in ```../data/60M```.
 
 ## Requirements
