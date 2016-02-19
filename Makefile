@@ -11,5 +11,5 @@ merge:
 convert:
 	cd tools; python convert_data.py
 
-all: download merge reduce
+all: download merge convert
 .PHONY: all

@@ -5,14 +5,13 @@
 
 import os, sys
 import pandas as pd
-import numpy as np
 import errno
 import datetime
 
 verbose = False
-window_minutes = 240
+window_minutes = 60
 minute_path = os.path.join(os.getcwd(), "../data/1M/")
-output_path = os.path.join(os.getcwd(), "../data/240M/")
+output_path = os.path.join(os.getcwd(), "../data/60M/")
 files = os.listdir(minute_path)
 epoch = datetime.datetime(1900, 1, 1, 0, 0)
 
