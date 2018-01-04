@@ -27,6 +27,10 @@ Using [Pandas](http://pandas.pydata.org/), this will invoke the *convert_data.py
 
 All commands mentioned above can be used with `SYMBOL=<symbols>` environment variable, otherwise script will download / merge / convert all available symbols
 
+### Optional year range
+```START_YEAR=2005 END_YEAR=2010 make download```
+
+This commands downloads data for all available symbols between years 2005 - 2010. Can be used together with `SYMBOL` variable.
 
 ## Requirements
 The following are required:

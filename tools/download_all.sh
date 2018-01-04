@@ -3,13 +3,17 @@
 
 export ALL_TICKERS=$(`pwd`/get_tickers.sh)
 
+STATE_YEAR=${START_YEAR:=2000}
+END_YEAR=${END_YEAR:=(date +%Y)}
+
 # Ensure we have a data directory
 
 RAW_PATH="../data/RAW"
 mkdir -p $RAW_PATH
 
-for t in $ALL_TICKERS; do
-    for i in `seq 2000 $(date +%Y)`; do
+for t in ${ALL_TICKERS}; do
+    echo "Downloading data ${t} for years ${START_YEAR} - ${END_YEAR}"
+    for i in `seq ${START_YEAR} ${END_YEAR}`; do
     	if [ $i == $(date +%Y) ]; then
     		# Download each month
     		# echo "CURRENT YEAR; Downloading up to month $(date +%m)..."
