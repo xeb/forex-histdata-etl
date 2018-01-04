@@ -9,7 +9,7 @@ RAW_PATH="../data/RAW"
 mkdir -p $RAW_PATH
 
 for t in $ALL_TICKERS; do
-    for i in `seq 1999 $(date +%Y)`; do
+    for i in `seq 2000 $(date +%Y)`; do
     	if [ $i == $(date +%Y) ]; then
     		# Download each month
     		# echo "CURRENT YEAR; Downloading up to month $(date +%m)..."

@@ -21,6 +21,13 @@ This will combine all the yearly & monthly files into a single CSV per instrumen
 
 Using [Pandas](http://pandas.pydata.org/), this will invoke the *convert_data.py* script and by default create 60 minute data sets.  The end result will be stored in ```../data/60M```.
 
+
+### Choose symbols
+```SYMBOL=EURUSD make download```
+
+All commands mentioned above can be used with `SYMBOL=<symbols>` environment variable, otherwise script will download / merge / convert all available symbols
+
+
 ## Requirements
 The following are required:
 * bash
