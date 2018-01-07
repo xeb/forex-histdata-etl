@@ -11,7 +11,7 @@ mkdir -p $RAW_PATH
 
 for t in $ALL_TICKERS; do
 	printf "Processing $t..." -n
-	FILES=$(ls $RAW_PATH/$t* | sort)
+	FILES=$(ls $RAW_PATH/*$t* | sort)
 	cat $FILES > $DATA_PATH/$t.tmp
 	cut -d, -f2,3,4,5,6,7,8 $DATA_PATH/$t.tmp | sed 's/......../&,/' > $DATA_PATH/$t.csv
 	sed -i '.old' '1i\
