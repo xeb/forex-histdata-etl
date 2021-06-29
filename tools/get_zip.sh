@@ -67,27 +67,29 @@ fi
 # echo "TK value is $TK"
 
 export FILE_PATH="output-$TICKER-$YEAR-$MONTH.zip"
-#echo "Downloading $FILE_PATH..."
+echo "Downloading $FILE_PATH..."
 
 export PAYLOAD="tk=$TK&date=$YEAR&datemonth=$YEAR$MONTH&platform=MS&timeframe=M1&fxpair=$TICKER"
-#echo "Payload is $PAYLOAD"
+echo "Payload is $PAYLOAD"
 
-curl 'http://www.histdata.com/get.php' \
-    -H 'Cookie: __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; __cfduid=d310948951de3b4be8511fb6402eef8f31454966770; complianceCookie=on; gsScrollPos=' \
-    -H 'Origin: http://www.histdata.com' \
-    -H 'Accept-Encoding: gzip, deflate' \
-    -H 'Accept-Language: en-US,en;q=0.8,mt;q=0.6' \
-    -H 'Upgrade-Insecure-Requests: 1' \
-    -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko)
-Chrome/48.0.2564.97 Safari/537.36' \
-    -H 'Content-Type: application/x-www-form-urlencoded' \
-    -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
-    -H 'Cache-Control: max-age=0' \
-    -H 'Referer: http://www.histdata.com/download-free-forex-historical-data/?/metastock/1-minute-bar-quotes/eurusd/2000' \
-    -H 'Connection: keep-alive' \
-    -H 'DNT: 1' \
-    --data "$PAYLOAD" \
-    --compressed > $FILE_PATH
+CMD="
+curl 'https://www.histdata.com/get.php' \
+	-H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0' \
+	-H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' \
+	-H 'Accept-Language: en-US,en;q=0.5' \
+	-H 'Content-Type: application/x-www-form-urlencoded' \
+	-H 'Referer: https://www.histdata.com/download-free-forex-historical-data/?/excel/1-minute-bar-quotes/eurusd/2021/6' \
+	-H 'Origin: https://www.histdata.com' \
+	-H 'Connection: keep-alive' \
+	-H 'Cookie: cookielawinfo-checkbox-necessary=yes; cookielawinfo-checkbox-non-necessary=yes' \
+	-H 'Upgrade-Insecure-Requests: 1' -H 'Sec-GPC: 1' \
+	--compressed \
+	--output '$FILE_PATH' \
+	--data-raw '$PAYLOAD'"
+
+echo "Running $CMD"
+eval $CMD
+
 if [[ -s $FILE_PATH ]]; then
     echo "Done!"
     exit 0

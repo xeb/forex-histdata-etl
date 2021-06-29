@@ -1,3 +1,4 @@
+.PHONY: all
 clean:
 	rm -rf data/
 	rm -rf tools/*.zip
@@ -12,4 +13,3 @@ convert:
 	cd tools; python convert_data.py
 
 all: download merge convert
-.PHONY: all
